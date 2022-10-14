@@ -1,7 +1,7 @@
-#creates a file in the tmp dir of the node
-
-file { 'holberton':
-  path    => '/tmp/holberton',
+# A resource declaration
+file { '/tmp/codingschool':
+  ensure  => file,
+  path    => '/tmp/codingschool',
   mode    => '0744',
   owner   => 'www-data',
   group   => 'www-data',
