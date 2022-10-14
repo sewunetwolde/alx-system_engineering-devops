@@ -1,8 +1,9 @@
-# creates a file in /tmp
+#creates a file in the tmp dir of the node
 
-file { '/tmp/school':
-  content =>'I love Puppet',
+file { 'holberton':
+  path    => '/tmp/holberton',
   mode    => '0744',
   owner   => 'www-data',
   group   => 'www-data',
-}
+  content => 'I love Puppet'
+
