@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Install your load balancer
-sudo apt-get -y update
-sudo apt-get -y install haproxy
-sudo chown  $USER:$USER /etc/haproxy/haproxy.cfg
+# Install and configure HAProxy load balancer to 2135-lb-01
+# sends traffic to web-01 and web-02
 
-echo "
-frontend estebanweb
-    bind *:80
-    mode http
-    default_backend app
-backend app
-    balance roundrobin
-    server 1542-web-01 34.73.222.49:80 check
-    server 1542-web-02 	54.82.121.70:80 check" >> /etc/haproxy/haproxy.cfg
 
-sudo service haproxy restart
+CONFGF="\\\nlisten appname 0.0.0.0:80\n\tmode http\n\tbalance roundrobin\n\toption httpclose\n\toption forwardfor\n\tserver 2135-web-01 35.237.202.79 check\n\tserver 2135-web-02 34.204.185.51 check\n"
+
+sudo apt-get update
+sudo apt-get -y install nginx
+#version 1.5 and above
+sudo apt-get install -y haproxy
+#enable HAproxy can be managed via an init script
+sudo sed -i "s/ENABLED=0/ENABLED=1/" /etc/default/haproxy
+# include roundrobin and two servers
+sudo sed -i "\$a $CONFGF" /etc/haproxy/haproxy.cfg
+
+sudo service haproxy start
