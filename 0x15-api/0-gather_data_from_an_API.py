@@ -1,39 +1,15 @@
 #!/usr/bin/python3
-"""
-Module 0-gather_data_from_an_API
-Using "https://jsonplaceholder.typicode.com/"
-Returns information about his/her TODO list progress
-"""
+""" Returns data from a REST API"""
 import requests
-from sys import argv
-
-
-def gather_data():
-    """Fetches data of employees and their todo tasks"""
-    users_url = "https://jsonplaceholder.typicode.com/users"
-    users = requests.get(users_url)
-    EMPLOYEE_NAME = ""
-    for i in users.json():
-        if i.get("id") == int(argv[1]):
-            EMPLOYEE_NAME = i.get("name")
-            break
-    NUMBER_OF_DONE_TASKS = 0
-    TOTAL_NUMBER_OF_TASKS = 0
-    TASK_TITLE = []
-
-    todos_url = "https://jsonplaceholder.typicode.com/todos"
-    todos = requests.get(todos_url)
-    for tasks in todos.json():
-        if tasks.get("userId") == int(argv[1]):
-            TOTAL_NUMBER_OF_TASKS += 1
-            if tasks.get("completed") is True:
-                NUMBER_OF_DONE_TASKS += 1
-                TASK_TITLE.append(tasks.get("title"))
-    print("Employee {} is done with tasks({}/{}):".format(
-        EMPLOYEE_NAME, NUMBER_OF_DONE_TASKS, TOTAL_NUMBER_OF_TASKS))
-    for task in TASK_TITLE:
-        print("\t {}".format(task))
+import sys
 
 
 if __name__ == "__main__":
-    gather_data()
+    url = "https://jsonplaceholder.typicode.com/"
+    user = requests.get(url + "users/{}".format(sys.argv[1])).json()
+    todos = requests.get(url + "todos", params={"userId": sys.argv[1]}).json()
+
+    complete = [t.get("title") for t in todos if t.get("completed") is True]
+    print("Employee {} is done with tasks({}/{}):".format(
+          user.get("name"), len(complete), len(todos)))
+    [print("\t {}".format(c)) for c in complete]
