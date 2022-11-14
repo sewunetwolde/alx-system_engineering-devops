@@ -1,30 +1,39 @@
 #!/usr/bin/python3
-'''A script that gathers employee name completed
-tasks and total number of tasks from an API
-'''
-
-import re
+"""
+Module 0-gather_data_from_an_API
+Using "https://jsonplaceholder.typicode.com/"
+Returns information about his/her TODO list progress
+"""
 import requests
-import sys
+from sys import argv
 
-REST_API = "https://jsonplaceholder.typicode.com"
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        if re.fullmatch(r'\d+', sys.argv[1]):
-            id = int(sys.argv[1])
-            emp_req = requests.get('{}/users/{}'.format(REST_API, id)).json()
-            task_req = requests.get('{}/todos'.format(REST_API)).json()
-            emp_name = emp_req.get('name')
-            tasks = list(filter(lambda x: x.get('userId') == id, task_req))
-            completed_tasks = list(filter(lambda x: x.get('completed'), tasks))
-            print(
-                'Employee {} is done with tasks({}/{}):'.format(
-                    emp_name,
-                    len(completed_tasks),
-                    len(tasks)
-                )
-            )
-            if len(completed_tasks) > 0:
-                for task in completed_tasks:
-                    print('\t {}'.format(task.get('title')))
+def gather_data():
+    """Fetches data of employees and their todo tasks"""
+    users_url = "https://jsonplaceholder.typicode.com/users"
+    users = requests.get(users_url)
+    EMPLOYEE_NAME = ""
+    for i in users.json():
+        if i.get("id") == int(argv[1]):
+            EMPLOYEE_NAME = i.get("name")
+            break
+    NUMBER_OF_DONE_TASKS = 0
+    TOTAL_NUMBER_OF_TASKS = 0
+    TASK_TITLE = []
+
+    todos_url = "https://jsonplaceholder.typicode.com/todos"
+    todos = requests.get(todos_url)
+    for tasks in todos.json():
+        if tasks.get("userId") == int(argv[1]):
+            TOTAL_NUMBER_OF_TASKS += 1
+            if tasks.get("completed") is True:
+                NUMBER_OF_DONE_TASKS += 1
+                TASK_TITLE.append(tasks.get("title"))
+    print("Employee {} is done with tasks({}/{}):".format(
+        EMPLOYEE_NAME, NUMBER_OF_DONE_TASKS, TOTAL_NUMBER_OF_TASKS))
+    for task in TASK_TITLE:
+        print("\t {}".format(task))
+
+
+if __name__ == "__main__":
+    gather_data()
