@@ -1,6 +1,6 @@
-#Fix error with strace command and fix it and automate using Puppet
+# Fixes bad `phpp` extensions to `php`
 
-file { '/var/www/html/wp-includes/class-wp-locale.phpp':
-  ensure => file,
-  source => '/var/www/html/wp-includes/class-wp-locale.php',
+exec { 'fix-wordpress':
+  command => 'sed -i s/phpp/php/g /var/www/html/wp-settings.php',
+  path    => '/usr/local/bin/:/bin/'
 }
