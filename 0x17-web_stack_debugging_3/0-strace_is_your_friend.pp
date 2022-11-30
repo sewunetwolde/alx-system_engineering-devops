@@ -1,6 +1,5 @@
-# automated puppet fix (to find out why Apache is returning a 500 error)
-
-exec { 'Fix wordpress site':
-  command  => 'sudo sed -i "s/.phpp/.php/" /var/www/html/wp-settings.php',
-  provider => shell,
+# Create a manifest that fixes file name typo
+exec { 'fix_typo':
+  command => 'mv /var/www/html/wp-includes/class-wp-locale.php /var/www/html/wp-includes/class-wp-locale.phpp',
+  path    => '/bin/'
 }
